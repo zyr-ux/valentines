@@ -235,13 +235,13 @@ export default function ValentinesProposal({ availableImages }: ValentinesPropos
           >
             I love you so much Mao ! 💕
             <p className="text-sm mt-4">Did you like the game? Look at the hapi hapi cat :)</p>
-            <Image
-              src="/hamster_jumping.gif"
-              alt="Hamster Feliz"
+            {/* <Image
+              src="/hapi_hapi_cat.gif"
+              alt="Hapi Hapi Cat"
               width={200}
               height={200}
               unoptimized
-            />
+            /> */}
           </motion.div>
         )}
       </AnimatePresence>
