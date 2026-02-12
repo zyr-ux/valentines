@@ -11,12 +11,12 @@ const ANIM_DURATION = 2;
 
 type HomeClientProps = {
     availableImages: { src: string; width: number; height: number }[];
+    bypassMinigame: boolean;
+    enableMusic: boolean;
 };
 
-export default function HomeClient({ availableImages }: HomeClientProps) {
-    const [showValentinesProposal, setShowValentinesProposal] = useState(
-        process.env.NEXT_PUBLIC_BYPASS_MINIGAME === "true"
-    );
+export default function HomeClient({ availableImages, bypassMinigame, enableMusic }: HomeClientProps) {
+    const [showValentinesProposal, setShowValentinesProposal] = useState(bypassMinigame);
     const [isTransitioning, setIsTransitioning] = useState(false);
 
     const handleShowProposal = () => {
@@ -50,7 +50,7 @@ export default function HomeClient({ availableImages }: HomeClientProps) {
                         animate={{ opacity: 1 }}
                         transition={{ duration: ANIM_DURATION }}
                     >
-                        <ValentinesProposal availableImages={availableImages} />
+                        <ValentinesProposal availableImages={availableImages} enableMusic={enableMusic} />
                     </motion.div>
                 )}
             </main>

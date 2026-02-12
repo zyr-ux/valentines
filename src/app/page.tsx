@@ -42,5 +42,14 @@ export default function Home() {
     availableImages = [];
   }
 
-  return <HomeClient availableImages={availableImages} />;
+  const bypassMinigame = process.env.BYPASS_MINIGAME === "true";
+  const enableMusic = process.env.ENABLE_MUSIC === "true";
+
+  return (
+    <HomeClient
+      availableImages={availableImages}
+      bypassMinigame={bypassMinigame}
+      enableMusic={enableMusic}
+    />
+  );
 }

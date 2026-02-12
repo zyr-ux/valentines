@@ -13,9 +13,11 @@ const playfairDisplay = Playfair_Display({
 
 type ValentinesProposalProps = {
   availableImages: { src: string; width: number; height: number }[];
+  enableMusic: boolean;
 };
 
-export default function ValentinesProposal({ availableImages }: ValentinesProposalProps) {
+export default function ValentinesProposal({ availableImages, enableMusic }: ValentinesProposalProps) {
+  const isMusicEnabled = enableMusic;
   const [step, setStep] = useState(0);
   const [position, setPosition] = useState<{
     top: string;
@@ -234,7 +236,7 @@ export default function ValentinesProposal({ availableImages }: ValentinesPropos
             exit={{ opacity: 0 }}
           >
             I love you so much Mao ! 💕
-            <p className="text-sm mt-4">Did you like the game? Look at the hapi hapi cat :)</p>
+            <p className="text-sm mt-4">Hope you liked the game :)</p>
             {/* <Image
               src="/hapi_hapi_cat.gif"
               alt="Hapi Hapi Cat"
@@ -264,17 +266,21 @@ export default function ValentinesProposal({ availableImages }: ValentinesPropos
       )}
 
       {/* Audio Element and Control Button */}
-      <audio ref={audioRef} loop suppressHydrationWarning>
-        <source src="/music.mp3" type="audio/mp3" />
-        Your browser does not support the audio element.
-      </audio>
+      {isMusicEnabled && (
+        <>
+          <audio ref={audioRef} loop suppressHydrationWarning>
+            <source src="/music.mp3" type="audio/mp3" />
+            Your browser does not support the audio element.
+          </audio>
 
-      <button
-        className="fixed top-4 right-4 z-50 px-4 py-2 bg-gray-100/80 backdrop-blur-sm text-gray-700 rounded-full hover:bg-gray-200 transition-all font-semibold text-sm shadow-md flex items-center gap-2"
-        onClick={toggleMusic}
-      >
-        {isPlaying ? "🎵" : "🔇"}
-      </button>
+          <button
+            className="fixed top-4 right-4 z-50 px-4 py-2 bg-gray-100/80 backdrop-blur-sm text-gray-700 rounded-full hover:bg-gray-200 transition-all font-semibold text-sm shadow-md flex items-center gap-2"
+            onClick={toggleMusic}
+          >
+            {isPlaying ? "🎵" : "🔇"}
+          </button>
+        </>
+      )}
     </div>
   );
 }
