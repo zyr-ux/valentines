@@ -43,3 +43,6 @@ next-env.d.ts
 # Custom pic conversions remnants
 /Conversion/inputs
 /Conversion/outputs
+
+# Personal Pics
+/public/game-photos
