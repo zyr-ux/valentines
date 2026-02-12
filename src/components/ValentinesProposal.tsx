@@ -135,17 +135,17 @@ export default function ValentinesProposal() {
               Will you be my Valentine?
             </h2>
             <Image
-              src="/sad_hamster.png"
-              alt="Sad Hamster"
+              src="/sunflowers.png"
+              alt="Sunflowers"
               width={200}
               height={200}
             />
             <div className="flex space-x-4 mt-10">
               <button
-                className="px-6 py-2 text-lg font-semibold text-white bg-gradient-to-r from-pink-500 to-rose-500 rounded-xl hover:from-pink-600 hover:to-rose-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="px-6 py-2 text-lg font-semibold text-black bg-gradient-to-r from-yellow-400 to-green-500 rounded-xl hover:from-yellow-500 hover:to-green-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
                 onClick={handleYesClick}
               >
-                Yes, I will! 🥰
+                Yes, I will!
               </button>
               <button
                 className="px-6 py-2 text-lg font-semibold text-white bg-gradient-to-r from-gray-500 to-gray-600 rounded-xl hover:from-gray-600 hover:to-gray-700 transform hover:scale-95 transition-all duration-300 shadow-lg"
@@ -161,7 +161,7 @@ export default function ValentinesProposal() {
                 onMouseEnter={() => setPosition(getRandomPosition())}
                 onClick={() => setPosition(getRandomPosition())}
               >
-                No, I won&apos;t 😢
+                No, I won&apos;t
               </button>
             </div>
           </motion.div>
@@ -175,7 +175,7 @@ export default function ValentinesProposal() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            Thank you for accepting, I love you Mao ! 💕
+            Thank you for accepting, I love you so much Mao ! 💕
             <p className="text-sm mt-4">Did you like the game? Look at the hapi hapi cat :)</p>
             <Image
               src="/hamster_jumping.gif"
