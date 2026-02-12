@@ -10,7 +10,9 @@ import OrientationGuard from "@/components/OrientationGuard";
 const ANIM_DURATION = 2;
 
 export default function Home() {
-  const [showValentinesProposal, setShowValentinesProposal] = useState(false);
+  const [showValentinesProposal, setShowValentinesProposal] = useState(
+    process.env.NEXT_PUBLIC_BYPASS_MINIGAME === "true"
+  );
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const handleShowProposal = () => {
