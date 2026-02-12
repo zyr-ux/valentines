@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Playfair_Display } from "next/font/google";
 import { motion, AnimatePresence } from "framer-motion";
 import Fireworks from "@fireworks-js/react";
@@ -28,6 +28,27 @@ export default function ValentinesProposal({ availableImages }: ValentinesPropos
     const randomLeft = Math.random() * 80;
     return { top: `${randomTop}%`, left: `${randomLeft}%` };
   };
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const toggleMusic = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play().catch((e) => console.log("Playback failed", e));
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  useEffect(() => {
+    // Attempt auto-play on mount, but handle failure silently (browser policy)
+    if (audioRef.current) {
+      audioRef.current.volume = 0.5; // Set volume to 50%
+    }
+  }, []);
 
   // Calculate grid columns for dynamic background
   // We want roughly square tiles, so sqrt is a good approximation
@@ -241,6 +262,19 @@ export default function ValentinesProposal({ availableImages }: ValentinesPropos
           />
         </div>
       )}
+
+      {/* Audio Element and Control Button */}
+      <audio ref={audioRef} loop suppressHydrationWarning>
+        <source src="/music.mp3" type="audio/mp3" />
+        Your browser does not support the audio element.
+      </audio>
+
+      <button
+        className="fixed top-4 right-4 z-50 px-4 py-2 bg-gray-100/80 backdrop-blur-sm text-gray-700 rounded-full hover:bg-gray-200 transition-all font-semibold text-sm shadow-md flex items-center gap-2"
+        onClick={toggleMusic}
+      >
+        {isPlaying ? "🎵" : "🔇"}
+      </button>
     </div>
   );
 }
