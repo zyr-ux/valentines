@@ -1,0 +1,11 @@
+services:
+  next-app:
+    container_name: valentines-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./public:/app/public
