@@ -47,3 +47,4 @@ next-env.d.ts
 # Personal Pics
 /public/game-photos
 /public/game-photos-default
+/public/music.mp3
