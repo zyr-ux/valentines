@@ -9,47 +9,13 @@ const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
 });
 
-// 36 images
-const images = [
-  "/game-photos/1.avif",
-  "/game-photos/2.avif",
-  "/game-photos/3.avif",
-  "/game-photos/4.avif",
-  "/game-photos/5.avif",
-  "/game-photos/6.avif",
-  "/game-photos/7.avif",
-  "/game-photos/8.avif",
-  "/game-photos/9.avif",
-  "/game-photos/10.avif",
-  "/game-photos/11.avif",
-  "/game-photos/12.avif",
-  "/game-photos/13.avif",
-  "/game-photos/14.avif",
-  "/game-photos/15.avif",
-  "/game-photos/16.avif",
-  "/game-photos/17.avif",
-  "/game-photos/18.avif",
-  "/game-photos/19.avif",
-  "/game-photos/20.avif",
-  "/game-photos/21.avif",
-  "/game-photos/22.avif",
-  "/game-photos/23.avif",
-  "/game-photos/24.avif",
-  "/game-photos/25.avif",
-  "/game-photos/26.avif",
-  "/game-photos/27.avif",
-  "/game-photos/28.avif",
-  "/game-photos/29.avif",
-  "/game-photos/30.avif",
-  "/game-photos/31.avif",
-  "/game-photos/32.avif",
-  "/game-photos/33.avif",
-  "/game-photos/34.avif",
-  "/game-photos/35.avif",
-  "/game-photos/36.avif",
-];
 
-export default function ValentinesProposal() {
+
+type ValentinesProposalProps = {
+  availableImages: string[];
+};
+
+export default function ValentinesProposal({ availableImages }: ValentinesProposalProps) {
   const [step, setStep] = useState(0);
   const [position, setPosition] = useState<{
     top: string;
@@ -62,6 +28,12 @@ export default function ValentinesProposal() {
     const randomLeft = Math.random() * 80;
     return { top: `${randomTop}%`, left: `${randomLeft}%` };
   };
+
+  // Calculate grid columns for dynamic background
+  // We want roughly square tiles, so sqrt is a good approximation
+  // Minimum 2 cols, maximum 8 to prevent too small tiles
+  const gridCols = Math.max(2, Math.min(8, Math.ceil(Math.sqrt(availableImages.length))));
+
 
   useEffect(() => {
     if (step < 2) {
@@ -116,9 +88,12 @@ export default function ValentinesProposal() {
             className="flex flex-col items-center"
           >
             {/* Image Grid Background */}
-            <div className="absolute inset-0 grid grid-cols-6 opacity-10">
-              {images.slice(0, 36).map((src, index) => (
-                <div key={index} className="relative h-full">
+            <div
+              className="absolute inset-0 grid opacity-10"
+              style={{ gridTemplateColumns: `repeat(${gridCols}, 1fr)` }}
+            >
+              {availableImages.map((src, index) => (
+                <div key={index} className="relative h-full w-full aspect-square">
                   <Image
                     src={src}
                     alt={`Memory ${index + 1}`}

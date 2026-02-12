@@ -1,52 +1,26 @@
-"use client";
-
-import { useState } from "react";
-import { motion } from "framer-motion";
-import PhotoPairGame from "../components/PhotoPairGame";
-import ValentinesProposal from "@/components/ValentinesProposal";
-import TextFooter from "@/components/TextFooter";
-import OrientationGuard from "@/components/OrientationGuard";
-
-const ANIM_DURATION = 2;
+import fs from "fs";
+import path from "path";
+import HomeClient from "./HomeClient";
 
 export default function Home() {
-  const [showValentinesProposal, setShowValentinesProposal] = useState(
-    process.env.NEXT_PUBLIC_BYPASS_MINIGAME === "true"
-  );
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const photoDir = process.env.GAME_PHOTOS_DIR || "public/game-photos";
+  const gamePhotosDir = path.join(process.cwd(), photoDir);
+  let availableImages: string[] = [];
 
-  const handleShowProposal = () => {
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setShowValentinesProposal(true);
-    }, ANIM_DURATION * 1000);
-  };
+  // Derive the public URL path by removing "public" from the directory path
+  // e.g. "public/game-photos" -> "/game-photos"
+  const publicUrlBase = "/" + photoDir.replace(/^public[\\/]/, "").replace(/\\/g, "/");
 
-  return (
-    <OrientationGuard>
-      <main className="flex items-center justify-center min-h-screen bg-black overflow-hidden relative">
-        {!showValentinesProposal ? (
-          <motion.div
-            initial={{ opacity: 1 }}
-            animate={{ opacity: isTransitioning ? 0 : 1 }}
-            transition={{ duration: ANIM_DURATION }}
-            className="flex flex-col items-center"
-          >
-            <PhotoPairGame handleShowProposal={handleShowProposal} />
-            <div className="mt-4 md:mt-0">
-              <TextFooter />
-            </div>
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: ANIM_DURATION }}
-          >
-            <ValentinesProposal />
-          </motion.div>
-        )}
-      </main>
-    </OrientationGuard>
-  );
+  try {
+    const files = fs.readdirSync(gamePhotosDir);
+    availableImages = files
+      .filter((file) => /\.(avif|jpg|jpeg|png|webp|gif)$/i.test(file))
+      .map((file) => `${publicUrlBase}/${file}`);
+  } catch (error) {
+    console.error("Error reading game photos directory:", error);
+    // Fallback or empty array if directory doesn't exist
+    availableImages = [];
+  }
+
+  return <HomeClient availableImages={availableImages} />;
 }

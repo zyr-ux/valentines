@@ -4,30 +4,10 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
-// 18 images
-const images = [
-  "/game-photos/1.avif",
-  "/game-photos/2.avif",
-  "/game-photos/3.avif",
-  "/game-photos/4.avif",
-  "/game-photos/5.avif",
-  "/game-photos/6.avif",
-  "/game-photos/7.avif",
-  "/game-photos/8.avif",
-  "/game-photos/9.avif",
-  "/game-photos/10.avif",
-  "/game-photos/11.avif",
-  "/game-photos/12.avif",
-  "/game-photos/13.avif",
-  "/game-photos/14.avif",
-  "/game-photos/15.avif",
-  "/game-photos/16.avif",
-  "/game-photos/17.avif",
-  "/game-photos/18.avif",
-];
+
 
 // Create 18 pairs of images (36 images in total)
-const imagePairs = images.flatMap((image) => [image, image]);
+
 
 const shuffleArray = (array: string[]) => {
   for (let i = array.length - 1; i > 0; i--) {
@@ -49,19 +29,34 @@ const heartLayout = [
 
 type ValentinesProposalProps = {
   handleShowProposal: () => void;
+  availableImages: string[];
 };
 
 export default function PhotoPairGame({
   handleShowProposal,
+  availableImages,
 }: ValentinesProposalProps) {
   const [selected, setSelected] = useState<number[]>([]);
   const [matched, setMatched] = useState<number[]>([]);
   const [incorrect, setIncorrect] = useState<number[]>([]);
-  const [images, setImages] = useState([...imagePairs]);
+  const [gameImages, setGameImages] = useState<string[]>([]);
 
   useEffect(() => {
-    setImages(shuffleArray([...imagePairs]));
-  }, []);
+    // Select 18 random images
+    let selectedImages = [...availableImages];
+
+    // If fewer than 18 images, duplicate until we have enough
+    while (selectedImages.length < 18 && selectedImages.length > 0) {
+      selectedImages = [...selectedImages, ...availableImages];
+    }
+
+    // Shuffle and pick first 18
+    selectedImages = shuffleArray(selectedImages).slice(0, 18);
+
+    // Create pairs and shuffle again
+    const pairs = selectedImages.flatMap((image) => [image, image]);
+    setGameImages(shuffleArray(pairs));
+  }, [availableImages]);
 
   const handleClick = async (index: number) => {
     if (selected.length === 2 || matched.includes(index) || selected.includes(index)) return;
@@ -70,7 +65,7 @@ export default function PhotoPairGame({
       const firstIndex = selected[0];
       setSelected((prev) => [...prev, index]);
 
-      if (images[firstIndex] === images[index]) {
+      if (gameImages[firstIndex] === gameImages[index]) {
         setMatched((prev) => [...prev, firstIndex, index]);
         setSelected([]);
       } else {
@@ -87,16 +82,18 @@ export default function PhotoPairGame({
 
   // Check if game is won
   useEffect(() => {
-    if (matched.length === imagePairs.length) {
+    if (gameImages.length > 0 && matched.length === gameImages.length) {
       handleShowProposal();
     }
-  }, [matched, handleShowProposal]);
+  }, [matched, gameImages, handleShowProposal]);
+
+  if (gameImages.length === 0) return null;
 
   return (
     <div className="grid grid-cols-9 gap-1 lg:gap-2 max-w-[95vw] mx-auto place-items-center">
       {/* Image preload */}
       <div className="hidden">
-        {images.map((image, i) => (
+        {gameImages.map((image, i) => (
           <Image
             key={i}
             src={image}
@@ -143,7 +140,7 @@ export default function PhotoPairGame({
                 style={{ backfaceVisibility: "hidden" }}
               >
                 <Image
-                  src={images[index]}
+                  src={gameImages[index]}
                   alt={`Imagen ${index + 1}`}
                   fill
                   className="rounded-sm lg:rounded-md object-cover"
