@@ -10,7 +10,7 @@ import OrientationGuard from "@/components/OrientationGuard";
 const ANIM_DURATION = 2;
 
 type HomeClientProps = {
-    availableImages: string[];
+    availableImages: { src: string; width: number; height: number }[];
 };
 
 export default function HomeClient({ availableImages }: HomeClientProps) {

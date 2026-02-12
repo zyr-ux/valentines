@@ -12,7 +12,7 @@ const playfairDisplay = Playfair_Display({
 
 
 type ValentinesProposalProps = {
-  availableImages: string[];
+  availableImages: { src: string; width: number; height: number }[];
 };
 
 export default function ValentinesProposal({ availableImages }: ValentinesProposalProps) {
@@ -33,6 +33,59 @@ export default function ValentinesProposal({ availableImages }: ValentinesPropos
   // We want roughly square tiles, so sqrt is a good approximation
   // Minimum 2 cols, maximum 8 to prevent too small tiles
   const gridCols = Math.max(2, Math.min(8, Math.ceil(Math.sqrt(availableImages.length))));
+
+  // Determine grid columns based on screen size (approximate for calculation)
+  // We'll use 6 cols for mobile, 12 for desktop in CSS, but for capping we can assume 6 to be safe or dynamic
+  const MAX_COLS = 6;
+
+  // Create a larger set of images for the grid
+  const [displayImages, setDisplayImages] = useState<{ src: string; width: number; height: number; span: { col: number; row: number } }[]>([]);
+
+  useEffect(() => {
+    // Duplicate images x4 for coverage
+    const baseImages = [...availableImages, ...availableImages, ...availableImages, ...availableImages];
+
+    const calculatedImages = baseImages.map((img) => {
+      const aspectRatio = img.width / img.height;
+      let baseCol = 1;
+      let baseRow = 1;
+
+      // Determine base shape (Unit Size)
+      if (aspectRatio > 1.4) {
+        // Wide
+        baseCol = 2;
+        baseRow = 1;
+      } else if (aspectRatio < 0.7) {
+        // Tall
+        baseCol = 1;
+        baseRow = 2;
+      } else {
+        // Square
+        baseCol = 1;
+        baseRow = 1;
+      }
+
+      // Apply Random Scale
+      // 60% chance 1x, 30% chance 2x, 10% chance 3x
+      const rand = Math.random();
+      let scale = 1;
+      if (rand > 0.6) scale = 2;
+      if (rand > 0.9) scale = 3;
+
+      let colSpan = baseCol * scale;
+      let rowSpan = baseRow * scale;
+
+      // Cap at MAX_COLS to prevent layout breakage on small screens
+      if (colSpan > MAX_COLS) colSpan = MAX_COLS;
+
+      return {
+        ...img,
+        span: { col: colSpan, row: rowSpan }
+      };
+    });
+
+    setDisplayImages(calculatedImages);
+  }, [availableImages]);
 
 
   useEffect(() => {
@@ -87,21 +140,30 @@ export default function ValentinesProposal({ availableImages }: ValentinesPropos
             exit={{ opacity: 0 }}
             className="flex flex-col items-center"
           >
-            {/* Image Grid Background */}
-            <div
-              className="absolute inset-0 grid opacity-10"
-              style={{ gridTemplateColumns: `repeat(${gridCols}, 1fr)` }}
-            >
-              {availableImages.map((src, index) => (
-                <div key={index} className="relative h-full w-full aspect-square">
-                  <Image
-                    src={src}
-                    alt={`Memory ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              ))}
+            {/* Image Unit Grid Background */}
+            <div className="absolute inset-0 overflow-hidden opacity-20">
+              <div
+                className="grid grid-cols-6 md:grid-cols-12 auto-rows-[16.666vw] md:auto-rows-[8.333vw] w-full grid-flow-dense"
+              >
+                {displayImages.map((img, index) => (
+                  <div
+                    key={index}
+                    className="relative w-full h-full overflow-hidden"
+                    style={{
+                      gridColumn: `span ${img.span.col}`,
+                      gridRow: `span ${img.span.row}`,
+                    }}
+                  >
+                    <Image
+                      src={img.src}
+                      alt={`Memory ${index + 1}`}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 16vw, 8vw"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
 
             <h2
@@ -150,7 +212,7 @@ export default function ValentinesProposal({ availableImages }: ValentinesPropos
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            Thank you for accepting, I love you so much Mao ! 💕
+            I love you so much Mao ! 💕
             <p className="text-sm mt-4">Did you like the game? Look at the hapi hapi cat :)</p>
             <Image
               src="/hamster_jumping.gif"

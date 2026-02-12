@@ -9,7 +9,7 @@ import { useState, useEffect } from "react";
 // Create 18 pairs of images (36 images in total)
 
 
-const shuffleArray = (array: string[]) => {
+const shuffleArray = <T,>(array: T[]) => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
@@ -29,7 +29,7 @@ const heartLayout = [
 
 type ValentinesProposalProps = {
   handleShowProposal: () => void;
-  availableImages: string[];
+  availableImages: { src: string; width: number; height: number }[];
 };
 
 export default function PhotoPairGame({
@@ -51,10 +51,13 @@ export default function PhotoPairGame({
     }
 
     // Shuffle and pick first 18
-    selectedImages = shuffleArray(selectedImages).slice(0, 18);
+    // We need to keep the expected type as string for game logic or update game logic
+    // The game logic uses strings. Let's map to src string for the game.
+    const selectedImageSrcs = selectedImages.map(img => img.src);
+    const shuffledParams = shuffleArray(selectedImageSrcs).slice(0, 18);
 
     // Create pairs and shuffle again
-    const pairs = selectedImages.flatMap((image) => [image, image]);
+    const pairs = shuffledParams.flatMap((image) => [image, image]);
     setGameImages(shuffleArray(pairs));
   }, [availableImages]);
 
