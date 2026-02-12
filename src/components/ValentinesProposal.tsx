@@ -32,7 +32,7 @@ export default function ValentinesProposal({ availableImages, enableMusic }: Val
   };
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   const toggleMusic = () => {
     if (audioRef.current) {
@@ -49,6 +49,10 @@ export default function ValentinesProposal({ availableImages, enableMusic }: Val
     // Attempt auto-play on mount, but handle failure silently (browser policy)
     if (audioRef.current) {
       audioRef.current.volume = 0.5; // Set volume to 50%
+      audioRef.current.play().catch((e) => {
+        console.log("Playback failed", e);
+        setIsPlaying(false);
+      });
     }
   }, []);
 
